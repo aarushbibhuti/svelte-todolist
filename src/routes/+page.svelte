@@ -1,5 +1,6 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
+  import githubLogo from "$lib/assets/github.svg";
   import type { PageData } from "./$types";
 
   let { data }: { data: PageData } = $props();
@@ -44,30 +45,40 @@
 </script>
 
 <header
-  class="flex items-center justify-between border-b border-slate-200 bg-white px-4 py-4 lg:px-6"
+  class="flex items-center justify-between border-b border-stone-200 bg-[#fbfaf6] px-4 py-4 lg:px-6"
 >
-  <h1 class="text-xl font-semibold tracking-tight text-slate-900">
-    svelte todolist <span class="font-normal text-slate-500">/ aarushbib</span>
+  <h1 class="flex items-center gap-2 font-serif text-xl font-semibold text-slate-900">
+    <a
+      href="https://github.com/aarushbibhuti/svelte-todolist"
+      target="_blank"
+      rel="noreferrer"
+      aria-label="svelte-todolist on GitHub"
+      class="inline-flex items-center gap-1.5 underline underline-offset-4"
+    >
+      <img src={githubLogo} alt="" class="h-5 w-5 pt-1" />
+      svelte-todolist
+    </a>
+    <span class="font-normal text-slate-500">/ aarushbibhuti</span>
   </h1>
-  <p class="text-sm tabular-nums text-slate-500">
+  <p class="text-sm tabular-nums text-slate-500 underline decoration-slate-400 underline-offset-4">
     {data.todos.length}
     {data.todos.length === 1 ? "task" : "tasks"}
   </p>
 </header>
-<main class="flex flex-col gap-6 p-4 lg:flex-row lg:items-start lg:p-6">
+<main class="flex min-h-screen flex-col gap-6 bg-[#f5f2e9] p-4 lg:flex-row lg:items-start lg:p-6">
   <aside class="w-full shrink-0 lg:w-72">
     <form
       method="POST"
       action="?/add"
       use:enhance
       class={[
-        "w-full px-5 py-5 rounded-xl transition-colors border bg-white shadow-sm",
+        "w-full px-5 py-5 rounded-none transition-colors border bg-[#fffefa]",
         {
           "border-red-500": priority === "high",
           "border-yellow-500": priority === "medium",
           "border-green-500": priority === "low",
         },
-        { "border-slate-200": priority === "" },
+        { "border-stone-300": priority === "" },
       ]}
     >
       <div class="mb-5">
@@ -81,7 +92,7 @@
           placeholder="enter a task"
           bind:value={task}
           required
-          class="mt-1 w-full rounded-sm border border-slate-300 bg-white px-3 py-2 shadow-sm placeholder-slate-400 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+          class="mt-1 w-full rounded-none border border-slate-300 bg-white px-3 py-2 placeholder-slate-400 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
         />
       </div>
       <fieldset class="space-y-2">
@@ -90,7 +101,7 @@
         >
         <div class="flex flex-col gap-1">
           <label
-            class="flex cursor-pointer items-center gap-3 rounded-md
+            class="flex cursor-pointer items-center gap-3 rounded-none
            border border-slate-200 px-3 py-2.5
            text-sm text-slate-700 transition-colors
            hover:bg-red-100"
@@ -107,7 +118,7 @@
           </label>
 
           <label
-            class="flex cursor-pointer items-center gap-3 rounded-md
+            class="flex cursor-pointer items-center gap-3 rounded-none
            border border-slate-200 px-3 py-2.5
            text-sm text-slate-700 transition-colors
            hover:bg-yellow-100"
@@ -123,7 +134,7 @@
           </label>
 
           <label
-            class="flex cursor-pointer items-center gap-3 rounded-md
+            class="flex cursor-pointer items-center gap-3 rounded-none
            border border-slate-200 px-3 py-2.5
            text-sm text-slate-700 transition-colors
            hover:bg-green-100"
@@ -141,7 +152,7 @@
       </fieldset>
       <button
         type="submit"
-        class="mt-5 w-full rounded-md bg-slate-900
+        class="mt-5 w-full rounded-none bg-slate-900
          px-4 py-2.5 text-sm font-semibold text-white
          transition-colors hover:bg-slate-700
          focus-visible:outline-2
@@ -164,7 +175,7 @@
         <select
           id="task-filter"
           bind:value={taskFilter}
-          class="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+          class="rounded-none border border-stone-300 bg-[#fffefa] px-3 py-2 text-sm text-slate-700 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
         >
           <option value="all">All tasks</option>
           <option value="active">Active</option>
@@ -178,7 +189,7 @@
         <select
           id="task-sort"
           bind:value={taskSort}
-          class="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+          class="rounded-none border border-stone-300 bg-[#fffefa] px-3 py-2 text-sm text-slate-700 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
         >
           <option value="priority">Priority: high to low</option>
           <option value="created">Original order</option>
@@ -189,7 +200,7 @@
     {#each visibleTodos as currentTask (currentTask.id)}
       <div
         class={[
-          "border-2 p-5 rounded-sm shadow-md",
+          "border-2 p-5 rounded-none",
           {
             "border-red-500 bg-red-50": currentTask.priority === "high",
             "border-yellow-500 bg-yellow-50": currentTask.priority === "medium",
