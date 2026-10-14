@@ -1,13 +1,36 @@
 <script lang="ts">
+  import { enhance } from "$app/forms";
   import type { PageData } from "./$types";
 
   let { data }: { data: PageData } = $props();
 
   let task = $state("");
   let priority = $state("");
+  let taskFilter = $state("all");
+  let taskSort = $state("priority");
   let editingId = $state<number | null>(null);
   let editTask = $state("");
   let editPriority = $state("");
+
+  let visibleTodos = $derived.by(() => {
+    const filteredTodos = data.todos.filter((todo) => {
+      if (taskFilter === "active") return !todo.completed;
+      if (taskFilter === "completed") return todo.completed;
+      return true;
+    });
+
+    const priorityOrder = { high: 0, medium: 1, low: 2 };
+    return filteredTodos.toSorted((a, b) => {
+      if (a.completed !== b.completed) return Number(a.completed) - Number(b.completed);
+      if (taskSort === "priority") {
+        return (
+          priorityOrder[a.priority as keyof typeof priorityOrder] -
+          priorityOrder[b.priority as keyof typeof priorityOrder]
+        );
+      }
+      return 0;
+    });
+  });
 
   function startEditing(currentTask: PageData["todos"][number]) {
     editingId = currentTask.id;
@@ -36,6 +59,7 @@
     <form
       method="POST"
       action="?/add"
+      use:enhance
       class={[
         "w-full px-5 py-5 rounded-xl transition-colors border bg-white shadow-sm",
         {
@@ -132,7 +156,37 @@
   <section
     class="grid min-w-0 flex-1 grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
   >
-    {#each data.todos as currentTask (currentTask.id)}
+    <div class="col-span-full flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-2">
+        <label for="task-filter" class="text-sm font-medium text-slate-700">
+          Show
+        </label>
+        <select
+          id="task-filter"
+          bind:value={taskFilter}
+          class="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+        >
+          <option value="all">All tasks</option>
+          <option value="active">Active</option>
+          <option value="completed">Completed</option>
+        </select>
+      </div>
+      <div class="flex items-center gap-2">
+        <label for="task-sort" class="text-sm font-medium text-slate-700">
+          Sort
+        </label>
+        <select
+          id="task-sort"
+          bind:value={taskSort}
+          class="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+        >
+          <option value="priority">Priority: high to low</option>
+          <option value="created">Original order</option>
+        </select>
+      </div>
+    </div>
+
+    {#each visibleTodos as currentTask (currentTask.id)}
       <div
         class={[
           "border-2 p-5 rounded-sm shadow-md",
@@ -144,7 +198,7 @@
         ]}
       >
         {#if editingId === currentTask.id}
-          <form method="POST" action="?/edit" class="mt-4 space-y-3">
+          <form method="POST" action="?/edit" use:enhance class="mt-4 space-y-3">
             <input type="hidden" name="id" value={currentTask.id} />
 
             <label class="block text-sm font-medium text-slate-700">
@@ -213,7 +267,7 @@
             >
               Edit
             </button>
-            <form method="POST" action="?/setCompleted">
+            <form method="POST" action="?/setCompleted" use:enhance>
               <input type="hidden" name="id" value={currentTask.id} />
               <input
                 type="hidden"
@@ -227,7 +281,7 @@
                 {currentTask.completed ? "Reopen" : "Mark complete"}
               </button>
             </form>
-            <form method="POST" action="?/delete">
+            <form method="POST" action="?/delete" use:enhance>
               <input type="hidden" name="id" value={currentTask.id} />
               <button
                 type="submit"
