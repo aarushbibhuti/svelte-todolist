@@ -81,5 +81,27 @@ export const actions = {
         }).where(eq(todos.id, id));
 
         return { success: true };
+    },
+    setCompleted: async ({ request }) => {
+        const formData = await request.formData();
+        const rawId = formData.get('id');
+        const rawCompleted = formData.get('completed');
+
+        if (typeof rawId !== 'string' || typeof rawCompleted !== 'string' || !['true', 'false'].includes(rawCompleted)) {
+            return { success: false };
+        }
+
+        const id = Number(rawId);
+        const completed = rawCompleted === 'true';
+
+        if (!Number.isInteger(id) || id <= 0) {
+            return { success: false };
+        }
+
+        await db.update(todos).set({
+            completed
+        }).where(eq(todos.id, id));
+
+        return { success: true };
     }
 } satisfies Actions;
