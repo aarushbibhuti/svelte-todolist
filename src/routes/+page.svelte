@@ -189,7 +189,10 @@
             </div>
           </form>
         {:else}
-          <p class="text-lg font-semibold">{currentTask.task}</p>
+          <p class={[
+            "text-lg font-semibold",
+            { "line-through text-slate-500": currentTask.completed },
+          ]}>{currentTask.task}</p>
           <p
             class={[
               "text-sm text-gray-500 capitalize mt-1",
@@ -210,6 +213,20 @@
             >
               Edit
             </button>
+            <form method="POST" action="?/setCompleted">
+              <input type="hidden" name="id" value={currentTask.id} />
+              <input
+                type="hidden"
+                name="completed"
+                value={currentTask.completed ? "false" : "true"}
+              />
+              <button
+                type="submit"
+                class="rounded-sm px-2 py-1 text-sm font-medium text-slate-600 hover:bg-white/70"
+              >
+                {currentTask.completed ? "Reopen" : "Mark complete"}
+              </button>
+            </form>
             <form method="POST" action="?/delete">
               <input type="hidden" name="id" value={currentTask.id} />
               <button
