@@ -1,5 +1,7 @@
 import { db } from '$lib/server/db';
 import { todos } from '$lib/server/db/schema';
+import type { Actions } from './$types';
+import { eq } from 'drizzle-orm';
 
 export async function load() {
     const allTodos = await db.select().from(todos);
@@ -9,7 +11,6 @@ export async function load() {
     };
 }
 
-import type { Actions } from './$types';
 
 export const actions = {
     add: async ({ request }) => {
@@ -31,6 +32,24 @@ export const actions = {
             task: task.trim(),
             priority
         });
+
+        return { success: true };
+    },
+    delete: async ({ request }) => {
+        const formData = await request.formData();
+        const rawId = formData.get('id');
+
+        if (typeof rawId !== 'string') {
+            return { success: false };
+        }
+
+        const id = Number(rawId);
+
+        if (!Number.isInteger(id) || id <= 0) {
+            return { success: false };
+        }
+
+        await db.delete(todos).where(eq(todos.id, id));
 
         return { success: true };
     }
