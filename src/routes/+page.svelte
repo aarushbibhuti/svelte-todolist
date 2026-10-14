@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { PageData } from './$types';
+  import type { PageData } from "./$types";
 
   let { data }: { data: PageData } = $props();
 
@@ -8,14 +8,18 @@
 </script>
 
 <h1
-  class="text-3xl font-bold bg-[#ff3c00] py-2 rounded-b-lg flex justify-center gap-4 shadow-lg text-white"
+  class="text-3xl font-bold bg-slate-500 py-2 rounded-b-lg flex gap-4 shadow-lg text-slate-100 px-3"
 >
-  Welcome to SvelteKit
+  svelte todolist - aarushbib
 </h1>
-<div class="flex flex-col items-center justify-center gap-4 mt-4">
-  <form method="POST" action="?/add" class="px-4 py-4 shadow-lg rounded-lg border">
-    <div class="mt-1 mb-2">
-      <label for="task" class="block text-lg font-medium text-gray-700"
+<div class="flex justify-center mt-6">
+  <form
+    method="POST"
+    action="?/add"
+    class={["w-5/6 px-5 py-5 shadow-md rounded-xl border-2 bg-white", {"border-red-500": priority === "high", "border-yellow-500": priority === "medium", "border-green-500": priority === "low"}, {"border-slate-200": priority === ""}]}
+  >
+    <div class="mb-5">
+      <label for="task" class="block text-sm font-semibold text-slate-700"
         >Task:</label
       >
       <input
@@ -25,41 +29,54 @@
         placeholder="enter a task"
         bind:value={task}
         required
-        class="px-1 py-1 border rounded focus:ring-2 focus:ring-blue-500 focus:outline-none w-full"
+        class="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 shadow-sm placeholder-slate-400 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
       />
     </div>
-    <fieldset>
-      <legend>Enter the priority:</legend>
+    <fieldset class="space-y-2">
+      <legend class="mb-3 text-sm font-semibold text-slate-700"
+        >Enter the priority:</legend
+      >
       <div class="flex flex-col gap-1">
-        <label>
+        <label
+        class="flex cursor-pointer items-center gap-3 rounded-md
+         border border-slate-200 px-3 py-2.5
+         text-sm text-slate-700 transition-colors
+         hover:bg-red-100"
+        >
           <input
             type="radio"
             name="priority"
             value="high"
-            class="mx-1 mt-1"
+            class="accent-slate-800"
             bind:group={priority}
             required
           />
           High
         </label>
 
-        <label>
+        <label class="flex cursor-pointer items-center gap-3 rounded-md
+         border border-slate-200 px-3 py-2.5
+         text-sm text-slate-700 transition-colors
+         hover:bg-yellow-100">
           <input
             type="radio"
             name="priority"
             value="medium"
-            class="mx-1"
+            class="accent-slate-800"
             bind:group={priority}
           />
           Medium
         </label>
 
-        <label>
+        <label class="flex cursor-pointer items-center gap-3 rounded-md
+         border border-slate-200 px-3 py-2.5
+         text-sm text-slate-700 transition-colors
+         hover:bg-green-100">
           <input
             type="radio"
             name="priority"
             value="low"
-            class="mx-1"
+            class="accent-slate-800"
             bind:group={priority}
           />
           Low
@@ -68,7 +85,12 @@
     </fieldset>
     <button
       type="submit"
-      class="bg-blue-500 hover:bg-blue-700 text-white font-bold mt-2 py-2 px-4 rounded"
+      class="mt-5 w-full rounded-md bg-slate-900
+       px-4 py-2.5 text-sm font-semibold text-white
+       transition-colors hover:bg-slate-700
+       focus-visible:outline-2
+       focus-visible:outline-offset-2
+       focus-visible:outline-slate-500"
     >
       Add Task
     </button>
@@ -101,6 +123,15 @@
         >
           {currentTask.priority}
         </p>
+        <form method="POST" action="?/delete" class="mt-2">
+          <input type="hidden" name="id" value={currentTask.id} />
+          <button
+            type="submit"
+            class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+          >
+            Delete
+          </button>
+        </form>
       </div>
     {/each}
   </div>
